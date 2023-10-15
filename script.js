@@ -1,6 +1,6 @@
-const API_KEY = "124729450199407ba0ad4a3117a7ab51";
-const url = "https://newsapi.org/v2/everything?q=";
-
+const API_KEY = "pub_31196389ee9aa0783fbc71218eaa3133db82e";
+const url = "https://newsdata.io/api/1/news?";
+//https://newsdata.io/api/1/news?apikey=YOUR_API_KEY&q=pegasus&language=en
 window.addEventListener("load", () => fetchNews("India"));
 
 function reload() {
@@ -8,43 +8,43 @@ function reload() {
 }
 
 async function fetchNews(query) {
-    const res = await fetch(`${url}${query}&apiKey=${API_KEY}`);
+    const res = await fetch(`${url}apiKey=${API_KEY}&q=${query}`);
     const data = await res.json();
-    bindData(data.articles);
+    bindData(data.results);
 }
 
-function bindData(articles) {
+function bindData(results) {
     const cardsContainer = document.getElementById("cards-container");
     const newsCardTemplate = document.getElementById("template-news-card");
 
     cardsContainer.innerHTML = "";
 
-    articles.forEach((article) => {
-        if (!article.urlToImage) return;
+    results.forEach((result) => {
+        if (!result.image_url) return;
         const cardClone = newsCardTemplate.content.cloneNode(true);
-        fillDataInCard(cardClone, article);
+        fillDataInCard(cardClone, result);
         cardsContainer.appendChild(cardClone);
     });
 }
 
-function fillDataInCard(cardClone, article) {
+function fillDataInCard(cardClone, result) {
     const newsImg = cardClone.querySelector("#news-img");
     const newsTitle = cardClone.querySelector("#news-title");
-    const newsSource = cardClone.querySelector("#news-source");
+    //const newsSource = cardClone.querySelector("#news-source");
     const newsDesc = cardClone.querySelector("#news-desc");
 
-    newsImg.src = article.urlToImage;
-    newsTitle.innerHTML = article.title;
-    newsDesc.innerHTML = article.description;
+    newsImg.src = result.image_url;
+    newsTitle.innerHTML = result.title;
+    newsDesc.innerHTML = result.description;
 
-    const date = new Date(article.publishedAt).toLocaleString("en-US", {
-        timeZone: "Asia/Jakarta",
-    });
+    // const date = new Date(article.pubDate).toLocaleString("en-US", {
+    //     timeZone: "Asia/Jakarta",
+    // });
 
-    newsSource.innerHTML = `${article.source.name} · ${date}`;
+    //newsSource.innerHTML = `${article.source_id} · ${date}`;
 
     cardClone.firstElementChild.addEventListener("click", () => {
-        window.open(article.url, "_blank");
+        window.open(result.link, "_blank");
     });
 }
 
